@@ -10,13 +10,13 @@ This repository is not intended to be a line-for-line source translation. The ru
 
 ## Features
 ![controls](images-for-readme/multiplayer.PNG)
-Mobile controls
+### Mobile controls
 - Virtual joystick + on-screen buttons: MENU, INV, JUMP, CROUCH, CHAT, KB, DBG, CHNKS
 - Hotbar tap-to-select, hold-to-mine / tap-to-place
 - MCPE-style touch crafting screen — category tabs, Craftable filter, tap-to-craft
 - Native iOS keyboard for usernames, world names, seeds, and chat
 ![qol](images-for-readme/flat.PNG)
-Extra content & QoL
+### Extra content & QoL
 - World types: Superflat (always Forest, tiered ores — coal/iron common, gold rare, redstone rarer, diamonds only in veins of 4+ — plus a starter tree and a small pond) and a flat Nether (lava, glowstone, soul sand; zombie pigmen only)
 - F3 debug screen, F3+G chunk borders (plus a mobile button), with vertical borders
 - FOV slider; Mobs / Particles / Cave Sounds toggles; Unstuck button
@@ -24,7 +24,7 @@ Extra content & QoL
 - iTunes File Sharing for assets and world saves
 - Custom app icon + "not affiliated with Mojang" disclaimer
 ![visuals](images-for-readme/house.PNG)
-Performance / visuals
+### Performance / visuals
 - GLES 1.1 shim with op-stream repacking and a software-authoritative matrix path for PowerVR SGX
 - Batched font rendering (sign text went ~1000 ms → ~45 ms)
 - Time-budgeted chunk renderer + streaming
