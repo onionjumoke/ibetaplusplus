@@ -15,7 +15,7 @@ This repository is not intended to be a line-for-line source translation. The ru
 - Hotbar tap-to-select, hold-to-mine / tap-to-place
 - MCPE-style touch crafting screen — category tabs, Craftable filter, tap-to-craft
 - Native iOS keyboard for usernames, world names, seeds, and chat
-![qol](images-for-readme/flat.PNG)
+![qol](images-for-readme/craft1.PNG)
 ### Extra content & QoL
 - World types: Superflat (always Forest, tiered ores — coal/iron common, gold rare, redstone rarer, diamonds only in veins of 4+ — plus a starter tree and a small pond) and a flat Nether (lava, glowstone, soul sand; zombie pigmen only)
 - F3 debug screen, F3+G chunk borders (plus a mobile button), with vertical borders
