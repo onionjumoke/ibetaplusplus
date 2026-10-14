@@ -50,7 +50,7 @@ void Packet51MapChunk::readPacketData(std::istream &is)
 	}
 	if (head.size() < 8 || head[head.size() - 2] != 0x78)
 	{
-		fprintf(stderr, "Beta++: MapChunk no zlib magic (got %zu)\n", head.size());
+		(void)0;
 		return;
 	}
 	size_t magicOff = head.size() - 2;
@@ -68,7 +68,7 @@ void Packet51MapChunk::readPacketData(std::istream &is)
 
 	if (csize < 2 || csize > (1 << 20))
 	{
-		fprintf(stderr, "Beta++: MapChunk bad csize=%d magicOff=%zu\n", csize, magicOff);
+		(void)0;
 		return;
 	}
 
@@ -98,7 +98,7 @@ void Packet51MapChunk::readPacketData(std::istream &is)
 	inflateEnd(&zs);
 	if (rc != Z_STREAM_END)
 	{
-		fprintf(stderr, "Beta++: MapChunk inflate rc=%d out=%zu csize=%d\n", rc, decomp, csize);
+		(void)0;
 		return;
 	}
 
@@ -109,16 +109,14 @@ void Packet51MapChunk::readPacketData(std::istream &is)
 	long expect = (long)xSize * ySize * zSize * 5 / 2;
 	if (expect != (long)decomp)
 	{
-		fprintf(stderr, "Beta++: MapChunk size mismatch decomp=%zu expect=%ld hdr=%02x %02x %02x %02x %02x\n",
-		        decomp, expect, head[8], head[9], head[10], head[11], head[12]);
+		(void)0;
 		return;
 	}
 	chunk.assign(outBuf.data(), outBuf.data() + decomp);
 
 	static std::atomic<uint32_t> ok{0};
 	if (ok.fetch_add(1) < 40)
-		fprintf(stderr, "Beta++: MapChunk x=%d y=%d z=%d %dx%dx%d decomp=%zu csize=%d\n",
-		        xPosition, yPosition, zPosition, xSize, ySize, zSize, decomp, csize);
+		(void)0;
 
 }
 

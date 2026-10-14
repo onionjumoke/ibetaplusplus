@@ -117,10 +117,7 @@ bool WorldRenderer::updateRenderer()
 		size_t n = tileEntityRenderers.size();
 		size_t cap = tileEntityRenderers.capacity();
 		if (d < 48 || n > 4096 || cap > 4096 || worldObj == nullptr || glRenderList <= 0)
-			fprintf(stderr, "Beta++: uR[%d] this=%p world=%p gl=%d pos=(%d,%d,%d) n=%zu cap=%zu wu=%d init=%d\n",
-				d, (void *)this, (void *)worldObj, (int)glRenderList,
-				(int)posX, (int)posY, (int)posZ, n, cap,
-				needsUpdate ? 1 : 0, isInitialized ? 1 : 0);
+			(void)0;
 		if (n > 4096 || cap > 4096 || worldObj == nullptr || glRenderList <= 0)
 			return true;
 	}
@@ -140,9 +137,7 @@ bool WorldRenderer::updateRenderer()
 				if (deferNow - deferLast > 4000)
 				{
 					deferLast = deferNow;
-					fprintf(stderr, "Beta++: DEFER wr pos=(%d,%d,%d) chunk(%d,%d) c=%p hasReal=%d\n",
-					        (int)posX, (int)posY, (int)posZ, cx, cz, (void *)c,
-					        (c != nullptr && c->hasRealData) ? 1 : 0);
+					(void)0;
 				}
 			}
 			return false;
@@ -243,23 +238,23 @@ bool WorldRenderer::updateRenderer()
 
 	{
 		static std::atomic<int> dbgE{0};
-		if (dbgE.fetch_add(1) < 12) fprintf(stderr, "Beta++: uR buildloop done this=%p skip0=%d skip1=%d\n", (void*)this, _skipRenderPass[0]?1:0, _skipRenderPass[1]?1:0);
+		if (dbgE.fetch_add(1) < 12) (void)0;
 	}
 	isChunkLit  = Chunk::isLit;
 	isInitialized = true;
 	needsUpdate = false;
 	{
 		static std::atomic<int> dbgD{0};
-		if (dbgD.fetch_add(1) < 12) fprintf(stderr, "Beta++: uR preDelCC %p\n", (void *)chunkcachePtr);
+		if (dbgD.fetch_add(1) < 12) (void)0;
 	}
 	delete chunkcachePtr;
 	{
 		static std::atomic<int> dbgD2{0};
-		if (dbgD2.fetch_add(1) < 12) fprintf(stderr, "Beta++: uR postDelCC\n");
+		if (dbgD2.fetch_add(1) < 12) (void)0;
 	}
 	{
 		static std::atomic<int> dbgZ{0};
-		if (dbgZ.fetch_add(1) < 12) fprintf(stderr, "Beta++: uR end this=%p\n", (void*)this);
+		if (dbgZ.fetch_add(1) < 12) (void)0;
 	}
 	return true;
 }

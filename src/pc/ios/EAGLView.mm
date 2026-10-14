@@ -472,13 +472,13 @@ static void styleMcButton(UIButton *b, bool slot)
 
 - (void)jumpDown
 {
-	fprintf(stderr, "Beta++: jumpBtn DOWN\n");
+	(void)0;
 	lwjgl::Keyboard::detail::pushLwjglKey(KEY_SPACE, true);
 }
 
 - (void)jumpUp
 {
-	fprintf(stderr, "Beta++: jumpBtn UP\n");
+	(void)0;
 	lwjgl::Keyboard::detail::pushLwjglKey(KEY_SPACE, false);
 }
 
@@ -540,7 +540,7 @@ static void styleMcButton(UIButton *b, bool slot)
 	_hotbar[9].frame = CGRectMake((barX + 183.0f) * gs + 6.0f,
 	                              barY * gs + 11.0f * gs - 20.0f, 40.0f, 40.0f);
 
-	fprintf(stderr, "Beta++: overlay dims %.0fx%.0f guiScale %.0f\n", gw, gh, gs);
+	(void)0;
 }
 
 - (void)recenterStickKnob

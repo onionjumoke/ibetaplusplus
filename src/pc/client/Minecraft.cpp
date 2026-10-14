@@ -313,7 +313,7 @@ void Minecraft::startGame()
 
     lwjgl::Display::setTitle(u"Minecraft Beta 1.7.3");
     lwjgl::Display::create();
-    fprintf(stderr, "Beta++: startGame Display.create done\n");
+    (void)0;
 
     mcDataDir  = getMinecraftDir();
     std::unique_ptr<File> savesDirectory(File::open(*mcDataDir, u"saves"));
@@ -322,7 +322,7 @@ void Minecraft::startGame()
     texturePackList = new TexturePackList(this, String::toUTF8(mcDataDir->toString()));
     renderEngine    = new RenderEngine(texturePackList, gameSettings);
     fontRenderer    = new FontRenderer(gameSettings, "/font/default.png", renderEngine);
-    fprintf(stderr, "Beta++: startGame render engine + fonts ready\n");
+    (void)0;
 
     ColorizerWater::func_28182_a(renderEngine->func_28149_a("/misc/watercolor.png"));
     ColorizerGrass::func_28181_a(renderEngine->func_28149_a("/misc/grasscolor.png"));
@@ -335,7 +335,7 @@ void Minecraft::startGame()
     AchievementList::openInventory->setStatStringFormatter(new StatStringFormatKeyInv(this));
 
     loadScreen();
-    fprintf(stderr, "Beta++: startGame loadScreen done\n");
+    (void)0;
 
     mouseHelper = new MouseHelper(nullptr);
 
@@ -521,7 +521,7 @@ void Minecraft::run()
     try
     {
         startGame();
-        fprintf(stderr, "Beta++: startGame() completed, entering main loop\n");
+        (void)0;
     }
     catch (...)
     {
@@ -547,10 +547,7 @@ void Minecraft::run()
                 {
                     double gapMs = (double)(frameStartNs - prevFrameStartNs) / 1e6;
                     if (gapMs > 300.0)
-                        fprintf(stderr,
-                                "Beta++: STALL frame=%.0fms tick=%.1f render=%.1f swap=%.1f present=%.1f world=%p screen=%p\n",
-                                gapMs, lastTickMs, lastRenderMs, lastSwapMs, lastPresentMs,
-                                (void *)theWorld, (void *)currentScreen);
+                        (void)0;
                 }
                 prevFrameStartNs = frameStartNs;
             }
@@ -573,34 +570,6 @@ void Minecraft::run()
                     timer->updateTimer();
                 }
 
-                // TEMP diagnostics: auto-walk a superflat world & watch for stuck.
-                if (getenv("IBPP_MOVETEST") != nullptr)
-                {
-                    static bool s_started = false;
-                    static bool s_forwardDown = false;
-                    if (!s_started && theWorld == nullptr)
-                    {
-                        s_started = true;
-                        fprintf(stderr, "Beta++: MOVETEST creating superflat world\n");
-                        playerController = new PlayerControllerSP(this);
-                        World::setNextWorldType(getenv("IBPP_MOVETEST_FLAT") ? 1 : 0);
-                        startWorld(getenv("IBPP_MOVETEST_FLAT") ? "ibpp_move_test" : "ibpp_move_test2",
-                                   "Move Test", 4242);
-                        displayGuiScreen(nullptr);
-                    }
-                    if (theWorld != nullptr && thePlayer != nullptr && !s_forwardDown)
-                    {
-                        s_forwardDown = true;
-                        thePlayer->handleKeyPress(gameSettings->keyBindForward->keyCode, true);
-                        fprintf(stderr, "Beta++: MOVETEST forward held\n");
-                    }
-                    if (theWorld != nullptr && thePlayer != nullptr && !isGamePaused)
-                    {
-                        // Auto-jump over 1-block steps so "stuck" means a real bug.
-                        bool j = (thePlayer->isCollidedHorizontally && thePlayer->onGround);
-                        thePlayer->handleKeyPress(gameSettings->keyBindJump->keyCode, j);
-                    }
-                }
 
                 long_t l1 = System::nanoTime();
                 for (int_t j = 0; j < timer->elapsedTicks; j++)
@@ -736,8 +705,7 @@ void Minecraft::run()
                                 fputs(newName.c_str(), uf);
                                 fclose(uf);
                             }
-                            fprintf(stderr, "Beta++: username set to '%s'\n",
-                                    newName.c_str());
+                            (void)0;
                         }
                     }
 
@@ -751,18 +719,7 @@ void Minecraft::run()
                             int px = MathHelper::floor_double(thePlayer->posX);
                             int py = MathHelper::floor_double(thePlayer->posY);
                             int pz = MathHelper::floor_double(thePlayer->posZ);
-                            fprintf(stderr,
-                                    "Beta++: light @(%d,%d,%d) above=%d surf=%d "
-                                    "-1=%d -3=%d b=%d,%d,%d,%d\n",
-                                    px, py, pz,
-                                    theWorld->getSavedLightValue(EnumSkyBlock::Sky, px, py + 2, pz),
-                                    theWorld->getSavedLightValue(EnumSkyBlock::Sky, px, py, pz),
-                                    theWorld->getSavedLightValue(EnumSkyBlock::Sky, px, py - 1, pz),
-                                    theWorld->getSavedLightValue(EnumSkyBlock::Sky, px, py - 3, pz),
-                                    theWorld->getBlockId(px, py - 1, pz),
-                                    theWorld->getBlockId(px, py - 2, pz),
-                                    theWorld->getBlockId(px, py - 3, pz),
-                                    theWorld->getBlockId(px, py - 6, pz));
+                            (void)0;
                         }
                     }
 
@@ -808,11 +765,7 @@ void Minecraft::run()
                     {
                         ::Profiling::advanceFrame();
                         int cnt = ::Profiling::currentCount();
-                        fprintf(stderr,
-                            "Beta++: phase ms/frame avg tick=%.1f render=%.1f present=%.1f "
-                            "| worst tick=%ld render=%ld present=%ld\n",
-                            accTicks / accN, accRender / accN, accPresent / accN,
-                            worstTicks, worstRender, worstPresent);
+                        (void)0;
                         fprintf(stderr,
                             "  sub ms: world=%.1f ents=%.1f ctrl=%.1f texfx=%.1f rdisp=%.1f fx=%.1f light=%.1f randb=%.1f spawn=%.1f stat=%.1f ing=%.1f mo=%.1f | clip=%.1f upd=%.1f draw=%.1f entsR=%.1f gui=%.1f\n",
                             ::Profiling::takeAvgMs(::Profiling::S_TICK_WORLD, &cnt),
@@ -875,38 +828,6 @@ void Minecraft::run()
                     l += 1000L;
                     i = 0;
 
-                    if (theWorld != nullptr && thePlayer != nullptr)
-                    {
-                        static double spx = 1e9, spy = 1e9, spz = 1e9;
-                        static int stall = 0;
-                        bool same = std::fabs(thePlayer->posX - spx) < 0.01 &&
-                                    std::fabs(thePlayer->posY - spy) < 0.01 &&
-                                    std::fabs(thePlayer->posZ - spz) < 0.01;
-                        stall = same ? stall + 1 : 0;
-                        spx = thePlayer->posX; spy = thePlayer->posY; spz = thePlayer->posZ;
-                        const char *tag = "-";
-                        if (currentScreen != nullptr)
-                        {
-                            if (dynamic_cast<GuiInventory *>(currentScreen) != nullptr) tag = "INVENTORY";
-                            else if (dynamic_cast<GuiCraftingMenu *>(currentScreen) != nullptr) tag = "CRAFTING";
-                            else if (dynamic_cast<GuiContainer *>(currentScreen) != nullptr) tag = "CONTAINER";
-                            else if (dynamic_cast<GuiIngameMenu *>(currentScreen) != nullptr) tag = "PAUSEMENU";
-                            else if (dynamic_cast<GuiChat *>(currentScreen) != nullptr) tag = "CHAT";
-                            else if (dynamic_cast<GuiGameOver *>(currentScreen) != nullptr) tag = "GAMEOVER";
-                            else tag = "other";
-                        }
-                        fprintf(stderr,
-                                "Beta++: STUCKDBG wt=%lld stall=%d paused=%d scr=%p pauseGui=%d tag=%s "
-                                "pos=(%.2f,%.2f,%.2f) last=(%.2f,%.2f,%.2f) onGround=%d cHz=%d cV=%d fwd=%.2f\n",
-                                (long long)theWorld->getWorldInfo()->getWorldTime(), stall,
-                                (int)isGamePaused, (void *)currentScreen,
-                                currentScreen ? (int)currentScreen->doesGuiPauseGame() : 0, tag,
-                                thePlayer->posX, thePlayer->posY, thePlayer->posZ,
-                                thePlayer->lastTickPosX, thePlayer->lastTickPosY, thePlayer->lastTickPosZ,
-                                (int)thePlayer->onGround, (int)thePlayer->isCollidedHorizontally,
-                                (int)thePlayer->isCollidedVertically,
-                                thePlayer->movementInput ? thePlayer->movementInput->moveForward : 0.0f);
-                    }
                 }
             }
             catch (const MinecraftException &)
@@ -1199,7 +1120,7 @@ void Minecraft::func_6254_a(int_t i, bool flag)
 
 void Minecraft::clickMouse(int_t i)
 {
-    fprintf(stderr, "Beta++: clickMouse(i)\n");
+    (void)0;
     if (i == 0 && leftClickCounter > 0)
         return;
     if (i == 0)
@@ -1441,7 +1362,7 @@ void Minecraft::runTick()
                 // field (updates live while typing) instead of replaying keys,
                 // which could only ever append.
                 focusedField->setText(inject);
-                fprintf(stderr, "Beta++: INJECT set field -> '%s'\n", inject.c_str());
+                (void)0;
             }
             else
             {
@@ -1571,8 +1492,11 @@ void Minecraft::runTick()
                             s_f3Down = true;
                             s_f3Combo = false;
                         }
-                        // G = 0x22 with F3 held -> chunk borders
-                        if (lwjgl::Keyboard::getEventKey() == 0x22 && lwjgl::Keyboard::isKeyDown(0x3D))
+                        // G = 0x22 with F3 held -> chunk borders. Use the tracked
+                        // F3 state, NOT Keyboard::isKeyDown(): that reads SDL's
+                        // hardware state, which is empty on iOS where keys are
+                        // pushed into the event queue (the CHNKS button).
+                        if (lwjgl::Keyboard::getEventKey() == 0x22 && s_f3Down)
                         {
                             s_f3Combo = true;
                             gameSettings->ofShowChunkBorders = !gameSettings->ofShowChunkBorders;
@@ -1704,22 +1628,21 @@ bool Minecraft::isMultiplayerWorld()
 
 void Minecraft::startWorld(const std::string &s, const std::string &s1, long_t l)
 {
-    fprintf(stderr, "Beta++: startWorld folder='%s' name='%s' seed=%ld\n",
-            s.c_str(), s1.c_str(), l);
+    (void)0;
     changeWorld1(nullptr);
-    fprintf(stderr, "Beta++: sw[1] old world cleared\n");
+    (void)0;
     if (saveLoader->isOldMapFormat(s))
     {
-        fprintf(stderr, "Beta++: sw[2] old format -> convert\n");
+        (void)0;
         convertMapFormat(s, s1);
     }
     else
     {
-        fprintf(stderr, "Beta++: sw[3] getting save loader\n");
+        (void)0;
         ISaveHandler *isavehandler = saveLoader->getSaveLoader(s, false);
-        fprintf(stderr, "Beta++: sw[4] constructing World\n");
+        (void)0;
         World *world = new World(isavehandler, String::fromUTF8(s1), l);
-        fprintf(stderr, "Beta++: sw[5] World constructed\n");
+        (void)0;
         if (world->isNewWorld)
         {
             statFileWriter->readStat(StatList::createWorldStat, 1);
@@ -1804,7 +1727,7 @@ static void cwWatchdog()
     }
     void *bt[32];
     int n = backtrace(bt, 32);
-    fprintf(stderr, "Beta++: WATCHDOG changeWorld still active, %d frames:\n", n);
+    (void)0;
     backtrace_symbols_fd(bt, n, STDERR_FILENO);
 }
 
@@ -1812,7 +1735,7 @@ void Minecraft::changeWorld(World *world, const std::string &s, EntityPlayerSP *
 {
     g_cwAlive = 1;
     std::thread([] { cwWatchdog(); }).detach();
-    fprintf(stderr, "Beta++: changeWorld enter\n");
+    (void)0;
     World *oldWorld = theWorld;
     EntityPlayerSP *transferredPlayer = entityplayer;
     if (transferredPlayer == nullptr && world != nullptr && world->multiplayerWorld)
@@ -1820,27 +1743,27 @@ void Minecraft::changeWorld(World *world, const std::string &s, EntityPlayerSP *
     if (oldWorld != nullptr && transferredPlayer != nullptr)
         oldWorld->detachEntityForWorldChange(transferredPlayer);
 
-    fprintf(stderr, "Beta++: cw[1] stats\n");
+    (void)0;
     statFileWriter->func_27175_b();
     statFileWriter->syncStats();
-    fprintf(stderr, "Beta++: cw[2] loadscreen\n");
+    (void)0;
     renderViewEntity = nullptr;
     loadingScreen->printText(s);
     loadingScreen->displayLoadingString("");
-    fprintf(stderr, "Beta++: cw[3] sound\n");
+    (void)0;
     sndManager->playStreaming(u"", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-    fprintf(stderr, "Beta++: cw[4] player lookup\n");
-    fprintf(stderr, "Beta++: x1 oldWorld=%p world=%p\n", (void*)oldWorld, (void*)world);
+    (void)0;
+    (void)0;
 
     if (oldWorld != nullptr)
     {
-        fprintf(stderr, "Beta++: x2 saving old world\n");
+        (void)0;
         oldWorld->saveWorldIndirectly(loadingScreen);
-        fprintf(stderr, "Beta++: x3 old world saved\n");
+        (void)0;
     }
 
     theWorld = world;
-    fprintf(stderr, "Beta++: x4 theWorld set\n");
+    (void)0;
 
     // Un jugador TRANSFERIDO (portal SP, o cambio de dimension MP) conserva el mismo
     // objeto EntityPlayer, pero su worldObj seguia apuntando al mundo viejo. Como ese
@@ -1851,21 +1774,21 @@ void Minecraft::changeWorld(World *world, const std::string &s, EntityPlayerSP *
     if (transferredPlayer != nullptr && world != nullptr)
         transferredPlayer->setWorld(world);
 
-    fprintf(stderr, "Beta++: x5 pre-worldblock\n");
+    (void)0;
     if (world != nullptr)
     {
-        fprintf(stderr, "Beta++: x6 controller\n");
+        (void)0;
         playerController->func_717_a(world);
-        fprintf(stderr, "Beta++: x7 mp-check\n");
+        (void)0;
         bool isMp = isMultiplayerWorld();
-        fprintf(stderr, "Beta++: x8 isMp=%d\n", isMp);
+        (void)0;
         if (!isMp)
         {
             if (entityplayer == nullptr)
             {
-                fprintf(stderr, "Beta++: x9 lookup4085\n");
+                (void)0;
                 thePlayer = (EntityPlayerSP *)world->func_4085_a(typeid(EntityPlayerSP));
-                fprintf(stderr, "Beta++: xa lookup done (%p)\n", (void*)thePlayer);
+                (void)0;
             }
         }
         else if (thePlayer != nullptr)
@@ -1875,12 +1798,12 @@ void Minecraft::changeWorld(World *world, const std::string &s, EntityPlayerSP *
                 world->entityJoinedWorld(thePlayer);
         }
 
-        fprintf(stderr, "Beta++: cw[5] terrain prep\n");
+        (void)0;
         if (!world->multiplayerWorld)
         {
-            fprintf(stderr, "Beta++: func_6255_d Building terrain begin\n");
+            (void)0;
             func_6255_d(s);
-            fprintf(stderr, "Beta++: func_6255_d done\n");
+            (void)0;
         }
         if (thePlayer == nullptr)
         {
@@ -2022,7 +1945,7 @@ void Minecraft::convertMapFormat(const std::string &s, const std::string &s1)
 
 void Minecraft::func_6255_d(const std::string &s)
 {
-    fprintf(stderr, "Beta++: fw begin\n");
+    (void)0;
     loadingScreen->printText(s);
     loadingScreen->displayLoadingString("Building terrain");
 
@@ -2059,21 +1982,20 @@ void Minecraft::func_6255_d(const std::string &s)
         {
             loadingScreen->setLoadingProgress((i++ * 100) / j);
             if ((i % 10) == 0)
-                fprintf(stderr, "Beta++: terrain prep %d/%d\n", i, j);
+                (void)0;
             long_t t0 = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
             theWorld->getBlockId(chunkcoordinates->x + k, 64, chunkcoordinates->z + l);
             while (theWorld->updatingLighting()) {}
             long_t dt = (std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() - t0) / 1000000LL;
             if (dt > 2000)
-                fprintf(stderr, "Beta++: slow chunk (%d,%d): %ld ms\n",
-                        k >> 4, l >> 4, dt);
+                (void)0;
         }
     }
 
     loadingScreen->displayLoadingString("Simulating world for a bit");
-    fprintf(stderr, "Beta++: simulate begin\n");
+    (void)0;
     theWorld->func_656_j();
-    fprintf(stderr, "Beta++: simulate done\n");
+    (void)0;
     g_cwAlive = 0;
 }
 

@@ -345,6 +345,7 @@ std::map<GLuint, BakedList> &bakedLists()
 void invalidateBaked(GLuint list) { bakedLists().erase(list); }
 
 GLuint g_nextListId = 1;
+
 GLuint g_recordingList = 0;
 
 bool recording()
@@ -431,7 +432,7 @@ void noteDeepPush(const void *ra)
 	{
 		void *bt[40];
 		int n = backtrace(bt, 40);
-		fprintf(stderr, "Beta++: DEEPPUSH ra=%p depth=%d bt=%d\n", ra, (int)g_mat.stack[g_mat.modeIdx].size(), n);
+		(void)0;
 		backtrace_symbols_fd(bt, n, 2);
 	}
 }
@@ -749,6 +750,7 @@ void emitDrawArraysSnapshot(GLenum mode, GLint first, GLsizei count)
 	if (natt == 0)
 		return;
 
+
 	// The union-span copy is only valid when all arrays are interleaved slices
 	// of ONE buffer (the Tessellator: same stride, small offsets). If they come
 	// from different buffers, [lo,hi) would splice unrelated memory between them
@@ -766,6 +768,7 @@ void emitDrawArraysSnapshot(GLenum mode, GLint first, GLsizei count)
 			interleaved = false;
 			break;
 		}
+
 
 	size_t argcPos = w.size();
 	w.push_back(0); // header placeholder
@@ -1364,8 +1367,7 @@ void interpretStream(Words &w, int depth)
 		{
 			static std::atomic<int> mm{0};
 			if (mm.fetch_add(1) < 12)
-				fprintf(stderr, "Beta++: OPMISMATCH op=%u argc=%u consumed=%d\n",
-				        (unsigned)(header & 0xFFu), (unsigned)argc, (int)(rd.p - argStart));
+				(void)0;
 		}
 		if (rd.p != argStart + argc)
 			rd.p = argStart + argc;
@@ -1494,11 +1496,7 @@ void bakeAndReplay(GLuint list, Words &w, int depth)
 			else if (c.kind == BakedCmd::K_NESTED) nnest++;
 			else if (c.kind == BakedCmd::K_RAW) nraw++;
 		}
-		fprintf(stderr,
-		        "Beta++: bake id=%u words=%zu cmds=%zu draw=%zu nest=%zu "
-		        "raw=%zu pool=%zu\n",
-		        list, w.size(), bk.cmds.size(), ndraw, nnest, nraw,
-		        bk.pool.size());
+		(void)0;
 	}
 	g_bakePoolBase = bk.pool.data();
 	playBaked(bk, depth);
@@ -1519,7 +1517,7 @@ void replayList(GLuint list, int depth)
 		if (depth == 0 && itL->second.size() >= 2000 && dbgDump.fetch_add(1) < 8)
 		{
 			const Words &w = itL->second;
-			fprintf(stderr, "Beta++: RLBIG %u n=%zu head:", list, w.size());
+			(void)0;
 			for (size_t q = 0; q < w.size() && q < 8; q++)
 				fprintf(stderr, " %08x", w[q]);
 			fprintf(stderr, " tail:");
@@ -1538,8 +1536,7 @@ bakeAndReplayDisabled:
 		{
 			static std::atomic<int> d {0};
 			if (d.fetch_add(1) < 10)
-				fprintf(stderr, "Beta++: LISTDEPTH id=%u n=%zu before=%zu after=%zu delta=%d\n",
-				        list, itL->second.size(), before, after, (int)(after - before));
+				(void)0;
 		}
 	}
 	(void)itL;
@@ -1598,7 +1595,7 @@ SHIM_HIDDEN void APIENTRY glEndList(void)
 		bool startsPush = !w.empty() && (w[0] & 0xFFu) == 22u; // OP_PUSH_MATRIX
 		if (startsPush && w.size() >= 50 && dd.fetch_add(1) < 3)
 		{
-			fprintf(stderr, "Beta++: RAW id=%u n=%zu:", finished, w.size());
+			(void)0;
 			for (size_t i = 0; i < w.size() && i < 48; i++)
 				fprintf(stderr, " %08x", w[i]);
 			fprintf(stderr, "\n");
@@ -2322,7 +2319,7 @@ SHIM_HIDDEN void APIENTRY glGetFloatv(GLenum pname, GLfloat *params)
 				int diffs = 0;
 				for (int i = 0; i < 16; i++)
 					if (std::fabs(rv[i] - g_mat.cur[idx].m[i]) > 1e-3f) diffs++;
-				fprintf(stderr, "Beta++: GMATCH pname=%x idx=%d diffs=%d\n", (unsigned)pname, idx, diffs);
+				(void)0;
 				if (diffs)
 				{
 					fprintf(stderr, "  mirror:");
@@ -2410,7 +2407,7 @@ bool initialize()
 	// ids (font, chunk render lists). Restarting at 1 would hand a NEW list the
 	// same id as an old one, so a chunk could draw another list's geometry
 	// (shattered triangles / wrong texture). Just invalidate every list.
-	fprintf(stderr, "Beta++: SHIM initialize (reset, nextListId was %u)\n", g_nextListId);
+	(void)0;
 	lists().clear();
 	bakedLists().clear();
 	g_nextListId += 1024; // skip ahead so no live id is ever reissued

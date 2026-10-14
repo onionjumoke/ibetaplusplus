@@ -60,7 +60,7 @@ void flushRetained()
 void handleKey(int_t key, bool repeat, bool down)
 {
 	if (key == 0x39) // SPACE: stuck-key forensics
-		fprintf(stderr, "Beta++: SPACE %s\n", down ? "DOWN" : "UP");
+		(void)0;
 	flushRetained();
 	g_hasRetainedEvent = true;
 

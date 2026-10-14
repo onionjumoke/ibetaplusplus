@@ -87,7 +87,7 @@ void pushScreenMotion(int x, int y, int xrel, int yrel)
 
 void pushScreenButton(int button, bool down, int x, int y)
 {
-	fprintf(stderr, "Beta++: MB%d %s @%d,%d\n", button, down ? "DOWN":"UP", x, y);
+	(void)0;
 
 	std::lock_guard<std::recursive_mutex> lock(stateMutex());
 	if (button >= 0 && button < 3)

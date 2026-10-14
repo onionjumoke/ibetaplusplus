@@ -331,8 +331,7 @@ World::World(ISaveHandler* saveHandler, const jstring& name, long_t seed, WorldP
     this->worldProvider->registerWorld(this);
     this->chunkProvider = getChunkProvider();
 
-    fprintf(stderr, "Beta++: WORLDLD isNew=%d seed=%ld name=%s\n",
-            (int)isNewWorld, (long)worldInfo->getRandomSeed(), String::toUTF8(name).c_str());
+    (void)0;
     
     if (flag)
     {
@@ -451,8 +450,7 @@ void World::saveWorld(bool flag, IProgressUpdate* progressUpdate)
     chunkProvider->saveChunks(flag, progressUpdate);
     long_t swT2 = System::currentTimeMillis();
     if (swT2 - swT0 >= 15)
-        fprintf(stderr, "Beta++: SAVEWORLD total=%ldms level=%ldms chunks=%ldms\n",
-                (long)(swT2 - swT0), (long)(swT1 - swT0), (long)(swT2 - swT1));
+        (void)0;
 }
 
 void World::saveLevel()
@@ -464,8 +462,7 @@ void World::saveLevel()
     mapStorage->saveAllData();
     long_t sl2 = System::currentTimeMillis();
     if (sl2 - sl0 >= 15)
-        fprintf(stderr, "Beta++: SAVELEVEL info=%ldms maps=%ldms\n",
-                (long)(sl1 - sl0), (long)(sl2 - sl1));
+        (void)0;
 }
 
 bool World::saveAllChunks(int i)

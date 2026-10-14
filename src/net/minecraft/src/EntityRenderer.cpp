@@ -660,7 +660,7 @@ void EntityRenderer::updateCameraAndRender(float partialTicks)
         static std::atomic<int> dbgRW{0};
         int rn = dbgRW.fetch_add(1);
         if (rn < 20)
-            fprintf(stderr, "Beta++: renderWorld[%d] mvDepth=%d\n", rn, gles11MatrixCurDepth(0));
+            (void)0;
     }
     if (mc->skipRenderWorld)
     {

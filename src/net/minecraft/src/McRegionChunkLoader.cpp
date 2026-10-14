@@ -95,9 +95,7 @@ void McRegionChunkLoader::saveChunk(World *world, Chunk *chunk)
         long_t t4 = System::currentTimeMillis();
 
         if (t4 - t0 >= 30)
-            fprintf(stderr, "Beta++: SAVECHUNK total=%ldms store=%ldms nbt=%ldms write=%ldms delta=%ldms bytes=%d\n",
-                    (long)(t4 - t0), (long)(t1 - t0), (long)(t2 - t1), (long)(t3 - t2), (long)(t4 - t3),
-                    (int)raw.size());
+            (void)0;
     }
     catch (...)
     {

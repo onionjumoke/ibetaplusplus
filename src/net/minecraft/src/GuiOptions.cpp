@@ -119,8 +119,7 @@ void GuiOptions::mouseClicked(int_t x, int_t y, int_t button)
 		// The generic iOS path (Minecraft::runTick) detects the focused field and
 		// opens the edit popup prefilled + live-synced, so nothing to do here.
 		usernameWasFocused = textboxUsername->isFocused;
-		fprintf(stderr, "Beta++: OPTFIELD tap=(%d,%d) focused=%d text='%s'\n",
-		        x, y, (int)textboxUsername->isFocused, textboxUsername->getText().c_str());
+		(void)0;
 	}
 }
 
@@ -151,7 +150,7 @@ bool GuiOptions::keyPressed(char_t c, int_t key)
 			fputs(name.c_str(), uf);
 			fclose(uf);
 		}
-		fprintf(stderr, "Beta++: username set to '%s'\n", name.c_str());
+		(void)0;
 	}
 	return true;
 }

@@ -432,22 +432,10 @@ void NetClientHandler::handleFlying(Packet10Flying* packet)
         if (nowMs - lastCorr > 4000)
         {
             lastCorr = nowMs;
-            fprintf(stderr, "Beta++: CORR total=%d moving=%d rotating=%d pos=(%.2f,%.2f,%.2f) onGround=%d cur=(%.2f,%.2f,%.2f)\n",
-                    (int)flyTotal.load(), packet->moving ? 1 : 0, packet->rotating ? 1 : 0,
-                    packet->xPosition, packet->yPosition, packet->zPosition,
-                    packet->onGround ? 1 : 0,
-                    mc->thePlayer != nullptr ? mc->thePlayer->posX : 0.0,
-                    mc->thePlayer != nullptr ? mc->thePlayer->posY : 0.0,
-                    mc->thePlayer != nullptr ? mc->thePlayer->posZ : 0.0);
+            (void)0;
         }
         if (fin.fetch_add(1) < 4)
-            fprintf(stderr, "Beta++: FLY moving=%d rotating=%d pos=(%.2f,%.2f,%.2f) yaw=%.1f pitch=%.1f onGround=%d cur=(%.2f,%.2f,%.2f)\n",
-                    packet->moving ? 1 : 0, packet->rotating ? 1 : 0,
-                    packet->xPosition, packet->yPosition, packet->zPosition,
-                    packet->yaw, packet->pitch, packet->onGround ? 1 : 0,
-                    mc->thePlayer != nullptr ? mc->thePlayer->posX : 0.0,
-                    mc->thePlayer != nullptr ? mc->thePlayer->posY : 0.0,
-                    mc->thePlayer != nullptr ? mc->thePlayer->posZ : 0.0);
+            (void)0;
     }
     EntityPlayerSP* playerSP = mc->thePlayer;
     EntityPlayer* player = playerSP;
@@ -514,8 +502,7 @@ void NetClientHandler::handlePreChunk(Packet50PreChunk* packet)
         int ax = packet->xPosition < 0 ? -packet->xPosition : packet->xPosition;
         int az = packet->yPosition < 0 ? -packet->yPosition : packet->yPosition;
         if (pcn < 8 || ((ax > 32 || az > 32) && pcfar.fetch_add(1) < 24))
-            fprintf(stderr, "Beta++: PRECHUNK x=%d z=%d load=%d (n=%d)\n",
-                    (int)packet->xPosition, (int)packet->yPosition, packet->mode ? 1 : 0, pcn);
+            (void)0;
     }
     worldClient->doPreChunk(packet->xPosition, packet->yPosition, packet->mode);
 }
@@ -624,7 +611,7 @@ void NetClientHandler::sendPacketAndFlush(Packet* packet)
     
     static std::atomic<uint32_t> sn{0};
     if (sn.fetch_add(1) < 40)
-        fprintf(stderr, "Beta++: SEND pkt id=%d\n", (int)packet->getPacketId());
+        (void)0;
     netManager->addToSendQueue(packet);
     netManager->flushQueue();  // func_28142_c
 }
@@ -638,7 +625,7 @@ void NetClientHandler::addToSendQueue(Packet* packet)
     
     static std::atomic<uint32_t> sn{0};
     if (sn.fetch_add(1) < 40)
-        fprintf(stderr, "Beta++: SEND pkt id=%d\n", (int)packet->getPacketId());
+        (void)0;
     netManager->addToSendQueue(packet);
 }
 

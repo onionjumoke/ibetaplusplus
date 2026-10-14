@@ -515,8 +515,7 @@ int_t Chunk::setChunkData(byte_t *abyte0, int_t i, int_t j, int_t k, int_t l, in
 	// the chunk arrays (heap corruption / SIGSEGV in memcpy).
 	if (i < 0 || l > 16 || k < 0 || j1 > 16 || j < 0 || i1 > 128 || i >= l || j >= i1 || k >= j1)
 	{
-		fprintf(stderr, "Beta++: setChunkData REJECTED x[%d,%d) y[%d,%d) z[%d,%d)\n",
-		        (int)i, (int)l, (int)j, (int)i1, (int)k, (int)j1);
+		(void)0;
 		return k1;
 	}
 	hasRealData = true;

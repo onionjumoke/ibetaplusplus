@@ -191,7 +191,7 @@ Chunk *ChunkLoader::loadChunkIntoWorldFromCompound(World *world, NBTTagCompound 
 	chunk->blocks = nbttagcompound->getByteArray(u"Blocks");
 	if ((int_t)chunk->blocks.size() != 16 * 16 * 128)
 	{
-		fprintf(stderr, "Beta++: corrupt chunk (%d,%d) reset to air\n", i, j);
+		(void)0;
 		chunk->blocks.assign(16 * 16 * 128, 0);
 	}
 	chunk->data   = NibbleArray(nbttagcompound->getByteArray(u"Data"));

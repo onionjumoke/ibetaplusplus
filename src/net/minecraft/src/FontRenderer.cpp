@@ -151,9 +151,16 @@ void FontRenderer::renderString(const std::string &s, int_t i, int_t j, int_t k,
 
 	for (size_t idx = 0; idx < s.length(); idx++)
 	{
-		if ((unsigned char)s[idx] == 0xa7 && idx + 1 < s.length())
+		// Colour code: U+00A7 '§' may arrive as a raw byte (0xA7) or as the
+		// UTF-8 pair (0xC2 0xA7) when the text came from a UTF-8 text field.
+		// Recognize both so neither byte is drawn as a glyph.
+		size_t code = idx;
+		if ((unsigned char)s[idx] == 0xc2 && idx + 1 < s.length() &&
+		    (unsigned char)s[idx + 1] == 0xa7)
+			code = idx + 1;
+		if ((unsigned char)s[code] == 0xa7 && code + 1 < s.length())
 		{
-			char lower = (char)std::tolower((unsigned char)s[idx + 1]);
+			char lower = (char)std::tolower((unsigned char)s[code + 1]);
 			int_t j1 = (int_t)std::string("0123456789abcdef").find(lower);
 			if (j1 >= 0 && j1 <= 15)
 			{
@@ -161,7 +168,7 @@ void FontRenderer::renderString(const std::string &s, int_t i, int_t j, int_t k,
 				tess->setColorRGBA_F((float)colorCodeR[codeIdx] / 255.0f,
 				                     (float)colorCodeG[codeIdx] / 255.0f,
 				                     (float)colorCodeB[codeIdx] / 255.0f, ca);
-				idx++;
+				idx = code + 1;
 				continue;
 			}
 		}
@@ -192,7 +199,8 @@ int_t FontRenderer::getStringWidth(const std::string &s)
 	int_t i = 0;
 	for (int_t j = 0; j < (int_t)s.length(); j++)
 	{
-		if ((unsigned char)s[j] == 0xa7)
+		if ((unsigned char)s[j] == 0xa7 ||
+		    ((unsigned char)s[j] == 0xc2 && j + 1 < (int_t)s.length() && (unsigned char)s[j + 1] == 0xa7))
 		{
 			j++;
 			continue;
@@ -294,6 +302,11 @@ std::vector<std::string> FontRenderer::split(const std::string &s, char delimite
 
 int_t FontRenderer::getCharIndex(char c)
 {
+	unsigned char uc0 = (unsigned char)c;
+	// Never map non-ASCII bytes to the "missing glyph" box: unknown high bytes
+	// (UTF-8 leads/continuations, stray accents) are simply skipped.
+	if (uc0 >= 0x80)
+		return -1;
 	std::size_t index = ChatAllowedCharacters::allowedCharacters.find(c);
 	if (index != std::string::npos)
 		return (int_t)index;

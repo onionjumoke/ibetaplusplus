@@ -1,13 +1,8 @@
 # iBetaPlusPlus
 
-iBetaPlusPlus is a heavily modified, clean-room C++ implementation of classic Minecraft-era gameplay (Beta 1.7.3) designed around portability, low-end hardware, and platform-specific optimization.
+iBetaPlusPlus is a modified version of BetaPlusPlus (by OptiJuegos), which is a heavily modified C++ implementation of classic Minecraft-era gameplay (Beta 1.7.3) designed around portability, low-end hardware, and platform-specific optimization.
 
 This repository is not intended to be a line-for-line source translation. The runtime, platform layers, rendering paths, input backends, storage systems, user interface, asset loading, and memory policies have been extensively reworked for the needs of this project.
-
-And yes, this project was built with DeepSeek 4.1 Flash, which means that it's sorta vibe coded. if you dont like it, dont use it
-
-## You can get the IPA in the Release tab btw, check the rest of the README to get the assts and resources folder
-
 
 ## Project goals
 
@@ -26,6 +21,40 @@ This project is **not affiliated with, endorsed by, sponsored by, approved by, o
 iBetaPlusPlus ships **no Minecraft assets**. Textures, sounds, fonts, language files, and all other game data are copyright Mojang Studios, are **not** included in this repository, and are **not** included in any binary this project produces. The software does not and cannot run without a user-supplied copy of those assets: on iOS, copy an `assets` folder into the app's Documents directory over iTunes File Sharing; on desktop, place an `assets` directory next to the executable. You are solely responsible for obtaining those assets lawfully and for complying with Mojang's End User License Agreement and Usage Guidelines.
 
 This software is provided "as is", without warranty of any kind, express or implied, and the authors accept no liability for its use. See `LICENSE` for the full terms. Nothing in this document grants any rights to Mojang's intellectual property.
+
+The grass block texture shown in the iOS icon is owned by Mojang, not by me.
+
+## Supported targets
+
+### iOS (legacy)
+
+The iOS build targets 32-bit armv7 devices on iOS 5–6 (e.g. iPhone 4S, iPad 4) using OpenGL ES 1.1 with a software-authoritative matrix path for PowerVR SGX hardware. User-supplied assets and world saves live in the app's Documents folder (iTunes File Sharing).
+
+### Desktop PC
+
+The desktop build uses SDL2 and OpenGL with the shared platform abstraction layer.
+
+### Terminal
+
+A headless terminal renderer (kitty graphics protocol, with an ANSI half-block fallback) is available for environments without a GPU.
+
+## Source layout
+
+```text
+src/
+  client/       Client-side shared code
+  java/         Java compatibility/runtime helpers
+  net/          Game implementation
+  platform/     Shared platform interfaces and backend selection
+  pc/           Desktop implementation
+  pc/ios/       Legacy iOS implementation
+  pc/terminal/  Terminal renderer
+  util/         Shared utility code
+
+cmake/          Toolchains, source selection, and platform build logic
+external/       Third-party dependencies
+ios/            iOS packaging, Info.plist, and the IPA builder
+```
 
 ## Setting up the assets and resources folders
 
@@ -54,47 +83,13 @@ into a test IPA.
 
 ### Where the folders go
 
-- **iOS** — copy **both** folders into the app's **Documents** directory over
+- **iOS** - copy **both** folders into the app's **Documents** directory over
   iTunes File Sharing (`device → Apps → iBetaPlusPlus → Documents`), then relaunch.
-- **Desktop** — place both folders next to the executable (the same directory
+- **Desktop** - place both folders next to the executable (the same directory
   as `BetaPlusPlus`).
 
 If either folder is missing, the app shows a "You're missing the files!" alert
 and closes.
-
-
-## Supported targets
-
-### iOS (legacy)
-
-The iOS build targets 32-bit armv7 devices on iOS 5–6 (e.g. iPhone 4S, iPad 4) using OpenGL ES 1.1 with a software-authoritative matrix path for PowerVR SGX hardware. User-supplied assets and world saves live in the app's Documents folder (iTunes File Sharing).
-
-### Desktop PC
-
-The desktop build uses SDL2 and OpenGL with the shared platform abstraction layer. You'll need to build it yourself since im not releasing the binary for this one.
-
-### Terminal
-
-A headless terminal renderer (kitty graphics protocol, with an ANSI half-block fallback) is available for environments without a GPU.
-
-## Source layout
-
-```text
-src/
-  client/       Client-side shared code
-  java/         Java compatibility/runtime helpers
-  net/          Game implementation
-  platform/     Shared platform interfaces and backend selection
-  pc/           Desktop implementation
-  pc/ios/       Legacy iOS implementation
-  pc/terminal/  Terminal renderer
-  util/         Shared utility code
-
-cmake/          Toolchains, source selection, and platform build logic
-external/       Third-party dependencies
-ios/            iOS packaging, Info.plist, and the IPA builder
-```
-
 
 ## Building
 

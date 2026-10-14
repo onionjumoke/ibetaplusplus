@@ -223,8 +223,7 @@ std::unique_ptr<Packet> Packet::readPacket(std::istream &is, bool flag)
 	{
 		static std::atomic<uint32_t> trace{0};
 		if (trace.fetch_add(1) < 300)
-			fprintf(stderr, "Beta++: pkt id=%d size=%d\n", (int)i,
-			        (int)packet->getPacketSize());
+			(void)0;
 	}
 
 	auto it = packetStats.find(i);

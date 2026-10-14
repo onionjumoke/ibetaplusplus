@@ -159,42 +159,6 @@ void presentFrame()
 	if (g_view != nil && g_glContext != nil)
 		[g_view presentFrame];
 
-	// Framebuffer dumps for remote diagnosis. On-demand only: capture (rotating
-	// bp1..bp20) while <TMPDIR>/bp.shot exists, so a live anomaly can be grabbed
-	// without paying the glReadPixels stall on every normal run.
-	{
-		static int shotNo = 0;
-		std::string shotMarker = std::string([NSTemporaryDirectory() UTF8String]) + "bp.shot";
-		if ((frames + 1) % 45 == 0 && access(shotMarker.c_str(), F_OK) == 0)
-		{
-			shotNo = (shotNo % 20) + 1;
-			GLint vp[4] = {0, 0, 0, 0};
-			glGetIntegerv(GL_VIEWPORT, vp);
-			int w = vp[2], h = vp[3];
-			if (w > 0 && h > 0 && w <= 2048 && h <= 2048)
-			{
-				std::vector<unsigned char> px((size_t)w * h * 4);
-				glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, px.data());
-				char name[64];
-				snprintf(name, sizeof(name), "/bp%d.ppm", shotNo);
-				std::string path = std::string([NSTemporaryDirectory() UTF8String]) + name;
-				FILE *f = fopen(path.c_str(), "wb");
-				if (f != nullptr)
-				{
-					fprintf(f, "P6\n%d %d\n255\n", w, h);
-					for (int y = h - 1; y >= 0; --y)
-						for (int x = 0; x < w; ++x)
-						{
-							unsigned char *p = &px[((size_t)y * w + x) * 4];
-							fputc(p[0], f); fputc(p[1], f); fputc(p[2], f);
-						}
-					fclose(f);
-					fprintf(stderr, "Beta++: wrote bp%d.ppm %dx%d\n", shotNo, w, h);
-				}
-			}
-		}
-	}
-
 	// Profiling telemetry every 300 presents (~5 s at 60 fps): per-second
 	// deltas of shim counters reveal where a frame's time goes.
 	frames++;
@@ -215,17 +179,7 @@ void presentFrame()
 	GLint vp[4] = {0, 0, 0, 0};
 	glGetIntegerv(GL_VIEWPORT, vp);
 	GLenum err = glGetError();
-	fprintf(stderr,
-	        "Beta++: f=%lu dt=%.1fs fps=%.1f | clear/s=%.0f immV/s=%.0fk arrV/s=%.0fk "
-	        "lists=%lu(+%lu) tex=%lukB/s(%lu/s) err=0x%x vp=[%d %d %d %d]\n",
-	        frames, dt, 300.0 / dt,
-	        (double)(s.clears - prev.clears) / dt,
-	        (double)(s.immVerts - prev.immVerts) / dt / 1000.0,
-	        (double)(s.arrVerts - prev.arrVerts) / dt / 1000.0,
-	        s.listCalls - prev.listCalls, s.listCompiles - prev.listCompiles,
-	        (unsigned long)(((double)(s.texUploadBytes - prev.texUploadBytes) / dt) / 1024),
-	        (unsigned long)((double)(s.texUploadCalls - prev.texUploadCalls) / dt),
-	        err, vp[0], vp[1], vp[2], vp[3]);
+	(void)0;
 	prev = s;
 	prevT = now;
 }
@@ -299,7 +253,7 @@ static std::atomic<bool> g_blurField(false);
 		[retiring retain];
 		[retiring autorelease];
 		g_alert = nil;
-		fprintf(stderr, "Beta++: text input retired on button\n");
+		(void)0;
 	}
 }
 
@@ -321,7 +275,7 @@ static std::atomic<bool> g_blurField(false);
 	(void)buttonIndex;
 	// Lifecycle is handled in clickedButtonAtIndex / hideTextInput; nothing to
 	// do here besides logging.
-	fprintf(stderr, "Beta++: text input dismissed\n");
+	(void)0;
 }
 
 @end
@@ -343,7 +297,7 @@ static void showAlert(const char *title, const char *initial, TextInputMode mode
 		{
 			// Self-heal: a stale alert (dismiss callback lost) must not wedge
 			// the toggle forever — force it down and build a fresh one.
-			fprintf(stderr, "Beta++: text input stale alert, forcing dismiss\n");
+			(void)0;
 			[g_alert dismissWithClickedButtonIndex:g_alert.cancelButtonIndex animated:NO];
 			[g_alert release];
 			g_alert = nil;
@@ -368,8 +322,7 @@ static void showAlert(const char *title, const char *initial, TextInputMode mode
 		[f addTarget:g_alertDelegate action:@selector(alertFieldChanged:)
 		    forControlEvents:UIControlEventEditingChanged];
 		g_injectBackspaces.store((mode == INPUT_FIELD) ? 0 : (NSInteger)initialStr.size());
-		fprintf(stderr, "Beta++: text input show (mode %d, base %lu)\n", (int)mode,
-		        (unsigned long)initialStr.size());
+		(void)0;
 		[g_alert show];
 	});
 }
@@ -432,7 +385,7 @@ bool isTextInputActive()
 void toggleKeyboard()
 {
 	bool hidden = (g_alert == nil);
-	fprintf(stderr, "Beta++: toggleKeyboard -> %s\n", hidden ? "SHOW" : "HIDE");
+	(void)0;
 	if (hidden)
 	{
 		if (overlayMode() == 1 && !inputTargetExists())
@@ -440,7 +393,7 @@ void toggleKeyboard()
 			// Targetless in-world tap: open chat, then let the game thread
 			// flash the alert once it has fresh text published (avoids the
 			// stale-empty prefill race at low fps).
-			fprintf(stderr, "Beta++: kb targetless -> opening chat\n");
+			(void)0;
 			lwjgl::Keyboard::detail::pushLwjglKey(0x14, true);  // KEY_T
 			lwjgl::Keyboard::detail::pushLwjglKey(0x14, false);
 			g_pendingShow.store(true);

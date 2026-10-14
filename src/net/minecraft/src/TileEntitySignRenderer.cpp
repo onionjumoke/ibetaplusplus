@@ -71,8 +71,7 @@ void TileEntitySignRenderer::renderTileEntitySignAt(TileEntitySign* tileentitysi
         if (now - s_lastLog >= 2000)
         {
             s_lastLog = now;
-            fprintf(stderr, "Beta++: SIGN n=%ld model=%ldms text=%ldms\n",
-                    (long)s_count, (long)(s_modelNs / 1000000), (long)(s_textNs / 1000000));
+            (void)0;
             s_modelNs = s_textNs = s_count = 0;
         }
     }

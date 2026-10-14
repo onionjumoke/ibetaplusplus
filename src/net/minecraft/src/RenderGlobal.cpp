@@ -100,7 +100,10 @@ RenderGlobal::RenderGlobal(Minecraft *minecraft, RenderEngine *renderengine)
 	constexpr int_t maxChunksTall = 8;
 	constexpr int_t maxWorldRenderers = maxChunksWide * maxChunksTall * maxChunksWide;
 	glRenderListBase = GLAllocation::generateDisplayLists(maxWorldRenderers * 3);
-	occlusionEnabled = minecraft->getOpenGlCapsChecker()->checkARBOcclusion();
+	// FORCE OFF: ARB occlusion query boxes are chunk-sized cubes drawn with the
+	// terrain texture. If the shim's colour-mask handling lets them render, they
+	// appear as shattered chunk-sized geometry. Test with them disabled.
+	occlusionEnabled = false;
 
 	if (occlusionEnabled)
 	{
@@ -431,9 +434,7 @@ void RenderGlobal::renderEntities(Vec3D *vec3d, ICamera *icamera, float f)
 		if (nowTE - s_lastTeLog >= 2000)
 		{
 			s_lastTeLog = nowTE;
-			fprintf(stderr, "Beta++: TE loaded=%zu visible=%zu render=%ldms worst=%ldms\n",
-			        worldObj->loadedTileEntityList.size(), tileEntities.size(),
-			        (long)teMs, (long)s_teWorst);
+			(void)0;
 			s_teWorst = 0;
 		}
 	}
@@ -457,8 +458,7 @@ void RenderGlobal::markRenderersForNewPosition(int_t i, int_t j, int_t k)
 		if (mrfpNow - mrfpLast > 2000)
 		{
 			mrfpLast = mrfpNow;
-			fprintf(stderr, "Beta++: markRFP player=(%d,%d,%d) grid=%dx%dx%d\n",
-			        (int)i, (int)j, (int)k, renderChunksWide, renderChunksTall, renderChunksDeep);
+			(void)0;
 		}
 	}
 	i -= 8;
@@ -781,11 +781,7 @@ int_t RenderGlobal::renderSortedRenderers(int_t i, int_t j, int_t k, double d)
 			if (dwNow - dwLast > 3000)
 			{
 				dwLast = dwNow;
-				fprintf(stderr, "Beta++: draw pos=(%d,%d,%d) clip=(%d,%d,%d) minus=(%d,%d,%d) cam=(%.0f,%.0f,%.0f) built=%d\n",
-					(int)worldrenderer->posX, (int)worldrenderer->posY, (int)worldrenderer->posZ,
-					(int)worldrenderer->posXClip, (int)worldrenderer->posYClip, (int)worldrenderer->posZClip,
-					(int)worldrenderer->posXMinus, (int)worldrenderer->posYMinus, (int)worldrenderer->posZMinus,
-					d1, d2, d3, worldrenderer->isBuilt() ? 1 : 0);
+				(void)0;
 			}
 		}
 		int_t j2 = -1;
@@ -820,24 +816,10 @@ int_t RenderGlobal::renderSortedRenderers(int_t i, int_t j, int_t k, double d)
 				{
 					ccLast = ccNow;
 					jstring ms = worldObj->getIChunkProvider()->makeString();
-					fprintf(stderr, "Beta++: CHUNKS %s player=(%.0f,%.0f,%.0f)\n",
-					        String::toUTF8(ms).c_str(),
-					        mc->renderViewEntity ? mc->renderViewEntity->posX : 0.0,
-					        mc->renderViewEntity ? mc->renderViewEntity->posY : 0.0,
-					        mc->renderViewEntity ? mc->renderViewEntity->posZ : 0.0);
+					(void)0;
 				}
 			}
-			fprintf(stderr, "Beta++: rend loaded=%d rendered=%d skip=%d clip=%d collect=%d q=%d marks=%ld enq=%ld mvdepth=%d refused=%d wr0=(%d,%d,%d) cm=(%.0f,%.0f,%.0f)\n",
-				renderersLoaded, renderersBeingRendered, renderersSkippingRenderPass,
-				renderersBeingClipped, l, (int)worldRenderersToUpdate.size(),
-				(long)g_dbgMarks.load(), (long)g_dbgEnq.load(),
-				gles11MatrixMaxDepth(0), gles11MatrixRefused(0),
-				renderChunksWide > 0 && worldRenderers != nullptr && worldRenderers[0] != nullptr ? (int)worldRenderers[0]->posX : 0,
-				renderChunksWide > 0 && worldRenderers != nullptr && worldRenderers[0] != nullptr ? (int)worldRenderers[0]->posY : 0,
-				renderChunksWide > 0 && worldRenderers != nullptr && worldRenderers[0] != nullptr ? (int)worldRenderers[0]->posZ : 0,
-				mc->renderViewEntity != nullptr ? mc->renderViewEntity->posX : 0.0,
-				mc->renderViewEntity != nullptr ? mc->renderViewEntity->posY : 0.0,
-				mc->renderViewEntity != nullptr ? mc->renderViewEntity->posZ : 0.0);
+			(void)0;
 			long yBuilt[8] = {0}, yDrawn[8] = {0};
 			int_t totalR = renderChunksWide * renderChunksTall * renderChunksDeep;
 			int unbuiltLogged = 0;
@@ -848,16 +830,11 @@ int_t RenderGlobal::renderSortedRenderers(int_t i, int_t j, int_t k, double d)
 				else if (unbuiltLogged < 8 && System::currentTimeMillis() % 4000 < 1200)
 				{
 					unbuiltLogged++;
-					fprintf(stderr, "Beta++: UNBUILT #%d pos=(%d,%d,%d) dirty=%d inQ=%d\n",
-					        (int)q2, (int)worldRenderers[q2]->posX, (int)worldRenderers[q2]->posY,
-					        (int)worldRenderers[q2]->posZ, worldRenderers[q2]->needsUpdate ? 1 : 0,
-					        (int)std::count(worldRenderersToUpdate.begin(), worldRenderersToUpdate.end(), worldRenderers[q2]));
+					(void)0;
 				}
 				if (!worldRenderers[q2]->skipRenderPass(0)) yDrawn[yl]++;
 			}
-			fprintf(stderr, "Beta++: ybuilt %ld %ld %ld %ld %ld %ld %ld %ld | ygeom %ld %ld %ld %ld %ld %ld %ld %ld\n",
-				yBuilt[0],yBuilt[1],yBuilt[2],yBuilt[3],yBuilt[4],yBuilt[5],yBuilt[6],yBuilt[7],
-				yDrawn[0],yDrawn[1],yDrawn[2],yDrawn[3],yDrawn[4],yDrawn[5],yDrawn[6],yDrawn[7]);
+			(void)0;
 		}
 	}
 	return l;
@@ -885,9 +862,7 @@ void RenderGlobal::renderSky(float f)
 		if (nowL - s_lastSkyLog >= 1000)
 		{
 			s_lastSkyLog = nowL;
-			fprintf(stderr, "Beta++: SKY f=%.3f rainPrev=%.3f rainCur=%.3f rainF=%.3f sky=(%.2f,%.2f,%.2f)\n",
-			        (double)f, (double)worldObj->getRainStrength(0.0f), (double)worldObj->getRainStrength(1.0f),
-			        (double)worldObj->func_27162_g(f), (double)f1, (double)f2, (double)f3);
+			(void)0;
 		}
 	}
 
@@ -1280,7 +1255,7 @@ bool RenderGlobal::updateRenderers(EntityLiving *entityliving, bool flag)
 		static std::atomic<int> dbgC{0};
 		dbgN = dbgC.fetch_add(1);
 		if (dbgN < 12)
-			fprintf(stderr, "Beta++: updR[%d] q=%d flag=%d\n", dbgN, (int)worldRenderersToUpdate.size(), flag ? 1 : 0);
+			(void)0;
 	}
 	bool flag1 = false;
 
@@ -1385,7 +1360,7 @@ bool RenderGlobal::updateRenderers(EntityLiving *entityliving, bool flag)
 	}
 
 	if (dbgN >= 0 && dbgN < 12)
-		fprintf(stderr, "Beta++: updR[%d] collect done arr=%d i1=%d\n", dbgN, (int)arraylist.size(), i1);
+		(void)0;
 
 	if (!arraylist.empty())
 	{
@@ -1401,14 +1376,14 @@ bool RenderGlobal::updateRenderers(EntityLiving *entityliving, bool flag)
 			WorldRenderer *worldrenderer2 = arraylist[k1];
 			if (!worldrenderer2->updateRenderer()) { worldRenderersToUpdate.push_back(worldrenderer2); continue; }
 			if (dbgN >= 0 && dbgN < 12)
-				fprintf(stderr, "Beta++: updR[%d] A ret k1=%d\n", dbgN, (int)k1);
+				(void)0;
 			worldrenderer2->needsUpdate = false;
 			if (dbgN >= 0 && dbgN < 12)
-				fprintf(stderr, "Beta++: updR[%d] B preDeq setSize=%d\n", dbgN, (int)worldRenderersQueuedForUpdate.size());
+				(void)0;
 			dequeueRendererUpdate(worldrenderer2);
 			cwBuilt++;
 			if (dbgN >= 0 && dbgN < 12)
-				fprintf(stderr, "Beta++: updR[%d] C postDeq k1=%d built=%d\n", dbgN, (int)k1, cwBuilt);
+				(void)0;
 		}
 		// Budget hit: arraylist[0..k1] were never examined. They were already
 		// removed from worldRenderersToUpdate by the collection loop, so
@@ -1418,7 +1393,7 @@ bool RenderGlobal::updateRenderers(EntityLiving *entityliving, bool flag)
 	}
 
 	if (dbgN >= 0 && dbgN < 12)
-		fprintf(stderr, "Beta++: updR[%d] afterArr built=%d\n", dbgN, cwBuilt);
+		(void)0;
 
 	int_t l1 = 0;
 	int_t i2 = byte0 - 1;
@@ -1456,7 +1431,7 @@ bool RenderGlobal::updateRenderers(EntityLiving *entityliving, bool flag)
 		}
 
 	if (dbgN >= 0 && dbgN < 12)
-		fprintf(stderr, "Beta++: updR[%d] afterAworld built=%d l1=%d\n", dbgN, cwBuilt, l1);
+		(void)0;
 
 	int_t j2 = 0;
 	int_t l2 = 0;
@@ -1485,8 +1460,7 @@ bool RenderGlobal::updateRenderers(EntityLiving *entityliving, bool flag)
 	worldRenderersToUpdate.resize(l2);
 
 	if (dbgN >= 0 && dbgN < 12)
-		fprintf(stderr, "Beta++: updR[%d] arr=%d built=%d l=%d i1=%d l1=%d left=%d\n",
-			dbgN, (int)arraylist.size(), cwBuilt, l, i1, l1, (int)worldRenderersToUpdate.size());
+		(void)0;
 
 	return l == i1 + l1;
 }
@@ -1611,6 +1585,26 @@ void RenderGlobal::drawChunkBorders(float f)
 		tessellator->addVertex((double)((pcx + range + 1) * 16) - dx, ly, z);
 	}
 	tessellator->draw();
+
+	// Vertical posts at every chunk corner so the borders read in 3D instead of
+	// only as a flat grid at the player's feet.
+	{
+		const double yTop = (double)MathHelper::floor_double(player->posY) + 20.0 - dy;
+		const double yBot = (double)MathHelper::floor_double(player->posY) - 4.0 - dy;
+		glColor4f(0.10f, 0.10f, 0.10f, 0.60f);
+		tessellator->startDrawing(1);
+		for (int_t cx = pcx - range; cx <= pcx + range + 1; cx++)
+		{
+			double x = (double)(cx * 16) - dx;
+			for (int_t cz = pcz - range; cz <= pcz + range + 1; cz++)
+			{
+				double z = (double)(cz * 16) - dz;
+				tessellator->addVertex(x, yBot, z);
+				tessellator->addVertex(x, yTop, z);
+			}
+		}
+		tessellator->draw();
+	}
 
 	glColor4f(1.0f, 1.0f, 1.0f, 0.85f);
 	glLineWidth(2.0f);

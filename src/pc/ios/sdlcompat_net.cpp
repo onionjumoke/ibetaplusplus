@@ -86,19 +86,15 @@ extern "C" TCPsocket SDLNet_TCP_Open(IPaddress *address)
 	sa.sin_addr.s_addr = address->host;
 	sa.sin_port = address->port;
 
-	fprintf(stderr, "Beta++: TCP_Open %u.%u.%u.%u:%u\n",
-	        address->host & 0xFF, (address->host >> 8) & 0xFF,
-	        (address->host >> 16) & 0xFF, (address->host >> 24) & 0xFF,
-	        ((address->host & 0) | ((address->port >> 8) & 0xFF)) |
-	            (((address->port & 0xFF) << 8)));
+	(void)0;
 	if (connect(fd, reinterpret_cast<sockaddr *>(&sa), sizeof(sa)) != 0)
 	{
-		fprintf(stderr, "Beta++: TCP connect FAILED errno=%d\n", errno);
+		(void)0;
 		setNetError("connect");
 		close(fd);
 		return nullptr;
 	}
-	fprintf(stderr, "Beta++: TCP connected\n");
+	(void)0;
 
 	// Blocking with a sane receive timeout so a dead peer cannot wedge the
 	// net thread forever.

@@ -51,9 +51,7 @@ void EntityClientPlayerMP::onUpdate()
 {
 	static std::atomic<uint32_t> un{0};
 	if (un.fetch_add(1) < 10)
-		fprintf(stderr, "Beta++: MP player onUpdate, blockExists=%d\n",
-		        (int)worldObj->blockExists(MathHelper::floor_double(posX), 64,
-		                                   MathHelper::floor_double(posZ)));
+		(void)0;
 	if (!worldObj->blockExists(MathHelper::floor_double(posX), 64, MathHelper::floor_double(posZ)))
 	{
 		// Pre-chunks count as existing: still send position so the server
@@ -61,7 +59,7 @@ void EntityClientPlayerMP::onUpdate()
 		static std::atomic<uint32_t> fn{0};
 		if (fn.fetch_add(1) < 10)
 		{
-			fprintf(stderr, "Beta++: sending flying pkt w/o chunk\n");
+			(void)0;
 			func_4056_N();
 		}
 		return;
@@ -104,8 +102,7 @@ void EntityClientPlayerMP::func_4056_N()
 		{
 			static std::atomic<int> sp{0};
 			if (sp.fetch_add(1) < 20)
-				fprintf(stderr, "Beta++: SENDPOS x=%.2f minY=%.2f stance=%.2f z=%.2f yaw=%.1f\n",
-				        posX, boundingBox->minY, posY, posZ, rotationYaw);
+				(void)0;
 		}
 		sendQueue->addToSendQueue(new Packet13PlayerLookMove(posX, boundingBox->minY, posY, posZ, rotationYaw, rotationPitch, onGround));
 		field_12242_bI = 0;

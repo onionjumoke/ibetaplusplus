@@ -271,9 +271,7 @@ bool ChunkProviderLoadOrGenerate::saveChunks(bool flag, IProgressUpdate *iprogre
 		{
 			long_t t_end = System::currentTimeMillis();
 			if (t_end - t_start >= 30)
-				fprintf(stderr, "Beta++: SAVECHUNKS total=%ldms save=%ldms saved=%d scan=%ldms flag=%d early\n",
-				        (long)(t_end - t_start), (long)t_save, (int)i,
-				        (long)(t_end - t_start - t_save), (int)flag);
+				(void)0;
 			return false;
 		}
 		if (iprogressupdate != nullptr && ++l % 10 == 0)
@@ -282,9 +280,7 @@ bool ChunkProviderLoadOrGenerate::saveChunks(bool flag, IProgressUpdate *iprogre
 	{
 		long_t t_end = System::currentTimeMillis();
 		if (t_end - t_start >= 30)
-			fprintf(stderr, "Beta++: SAVECHUNKS total=%ldms save=%ldms saved=%d scan=%ldms flag=%d\n",
-			        (long)(t_end - t_start), (long)t_save, (int)i,
-			        (long)(t_end - t_start - t_save), (int)flag);
+			(void)0;
 	}
 	if (flag)
 	{

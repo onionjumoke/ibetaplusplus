@@ -17,6 +17,8 @@
 #include <sys/stat.h>
 #include <sys/sysctl.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <climits>
 
 #include <mach/mach.h>
 #include <pthread.h>
@@ -37,8 +39,28 @@
 #include "lwjgl/GLContext.h"
 
 // ── Crash black box: dump raw backtrace to stderr (bp.log) on fatal signals ─
+// bp.log is truncated every launch (freopen "w"), so a crash backtrace is lost
+// as soon as the user relaunches to retry. bp.crash.log is opened O_APPEND and
+// the handler redirects stderr to it, so the *last* crash always survives.
+static int g_crashFd = -1;
+
+static void bpOpenCrashLog()
+{
+	const char *dir = ::getenv("TMPDIR");
+	if (dir == nullptr || dir[0] == '\0')
+		dir = ::getenv("HOME");
+	if (dir == nullptr || dir[0] == '\0')
+		return;
+	char path[PATH_MAX];
+	snprintf(path, sizeof(path), "%s/bp.crash.log", dir);
+	g_crashFd = ::open(path, O_WRONLY | O_CREAT | O_APPEND, 0644);
+}
 static void bpCrashHandler(int sig, siginfo_t *, void *ctx)
 {
+	// Send the whole dump to the append-only crash log as well as stderr.
+	if (g_crashFd >= 0)
+		::dup2(g_crashFd, STDERR_FILENO);
+
 	// Async-signal-safety: write(2) + backtrace(3) only. backtrace_symbols_fd
 	// mallocs (technically unsafe) but usually succeeds and gives readable
 	// frames; we already wrote the raw addresses first either way.
@@ -115,109 +137,8 @@ static void bpInstallCrashHandler()
 	sigaction(SIGILL, &sa, nullptr);
 }
 
-// ── System profiler: per-thread CPU deltas + RSS, printed every 5 s ─────────
-// Gated on the bp.debug marker (same as stderr mirroring). Mach gives us
-// per-thread user+sys time; deltas over the sample window = CPU%.
-
-static std::atomic<bool> g_profRun(false);
-static mach_port_t g_gameThread = MACH_PORT_NULL;
-static mach_port_t g_mainThread = MACH_PORT_NULL;
-
-// Defined in GLES11Shim.cpp at global scope.
-extern std::atomic<uint32_t> g_playDraws;
-extern std::atomic<uint32_t> g_playLists;
-
 namespace
 {
-
-double threadCpuMs(thread_act_t t)
-{
-	struct thread_basic_info info;
-	mach_msg_type_number_t count = THREAD_BASIC_INFO_COUNT;
-	if (thread_info(t, THREAD_BASIC_INFO, (thread_info_t)&info, &count) != KERN_SUCCESS)
-		return -1.0;
-	return (info.user_time.seconds + info.system_time.seconds) * 1000.0 +
-	       (info.user_time.microseconds + info.system_time.microseconds) / 1000.0;
-}
-
-void sysProfilerLoop()
-{
-	std::map<uint32_t, double> lastCpu;
-	const useconds_t intervalUs = 5000000; // 5 s
-
-	while (g_profRun.load())
-	{
-		usleep(intervalUs);
-
-		thread_act_array_t list;
-		mach_msg_type_number_t cnt = 0;
-		if (task_threads(mach_task_self(), &list, &cnt) != KERN_SUCCESS)
-			continue;
-
-		int ncpu = (int)sysconf(_SC_NPROCESSORS_ONLN);
-		if (ncpu <= 0) ncpu = 1;
-
-		double totalDelta = 0.0;
-		std::vector<std::pair<double, std::string>> rows;
-
-		for (mach_msg_type_number_t i = 0; i < cnt; ++i)
-		{
-			double now = threadCpuMs(list[i]);
-			if (now < 0.0)
-				continue;
-			uint32_t key = (uint32_t)list[i];
-			double delta = now - lastCpu[key];
-			lastCpu[key] = now;
-			if (delta < 0.0)
-				delta = 0.0;
-			totalDelta += delta;
-
-			const char *label = "t";
-			char buf[24];
-			if (list[i] == g_gameThread)
-				label = "game";
-			else if (list[i] == g_mainThread)
-				label = "main";
-			else
-			{
-				snprintf(buf, sizeof(buf), "t%u", key & 0xfff);
-				label = buf;
-			}
-			rows.push_back({delta, label});
-		}
-
-		for (mach_msg_type_number_t i = 0; i < cnt; ++i)
-			mach_port_deallocate(mach_task_self(), list[i]);
-		vm_deallocate(mach_task_self(), (vm_address_t)list, cnt * sizeof(thread_act_t));
-
-		std::sort(rows.begin(), rows.end(),
-		          [](const std::pair<double, std::string> &a,
-		             const std::pair<double, std::string> &b) {
-			          return a.first > b.first;
-		          });
-
-		struct task_basic_info tbi;
-		mach_msg_type_number_t icount = TASK_BASIC_INFO_COUNT;
-		double rssMB = 0.0;
-		if (task_info(mach_task_self(), TASK_BASIC_INFO, (task_info_t)&tbi, &icount) == KERN_SUCCESS)
-			rssMB = tbi.resident_size / 1048576.0;
-
-		uint32_t pd = g_playDraws.exchange(0);
-		uint32_t pl = g_playLists.exchange(0);
-		fprintf(stderr, "Beta++: sys ram=%.0fMB thr=%zu cpu:", rssMB, (size_t)cnt);
-		double denom = ((double)intervalUs / 1000.0) * ncpu;
-		size_t shown = 0;
-		for (const auto &r : rows)
-		{
-			if (shown >= 4)
-				break;
-			fprintf(stderr, " %s %.0f%%", r.second.c_str(),
-			        totalDelta > 0 ? r.first / denom * 100.0 : 0.0);
-			shown++;
-		}
-		fprintf(stderr, " | draws=%u lists=%u\n", pd, pl);
-	}
-}
 
 std::string trimUsername(std::string value)
 {
@@ -262,17 +183,13 @@ namespace iosapp
 
 int runGameOnThisThread()
 {
-	g_gameThread = mach_thread_self();
-	g_profRun.store(true);
-	std::thread([] { sysProfilerLoop(); }).detach();
-
 	// Wait for the window/view pair created by the app delegate.
 	if (!waitForView(30.0))
 	{
-		fprintf(stderr, "Beta++: view never became ready\n");
+		(void)0;
 		return 1;
 	}
-	fprintf(stderr, "Beta++: game thread starting, view ready\n");
+	(void)0;
 
 	try
 	{
@@ -280,10 +197,10 @@ int runGameOnThisThread()
 	}
 	catch (const std::exception &e)
 	{
-		fprintf(stderr, "Beta++: failed to create EAGL context: %s\n", e.what());
+		(void)0;
 		return 1;
 	}
-	fprintf(stderr, "Beta++: EAGL context ready\n");
+	(void)0;
 
 	jstring username = String::fromUTF8(loadUsername());
 	jstring auth = u"-";
@@ -296,6 +213,7 @@ int runGameOnThisThread()
 
 int main(int argc, char *argv[])
 {
+	bpOpenCrashLog();
 	bpInstallCrashHandler();
 	// Marker-file debug switch: if <TMPDIR>/bp.debug exists, mirror stderr
 	// (assert/terminate messages, diagnostics) into <TMPDIR>/bp.log so
@@ -319,7 +237,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	g_mainThread = mach_thread_self();
 	@autoreleasepool
 	{
 		UIApplicationMain(argc, argv, nil, @"IOSAppDelegate");

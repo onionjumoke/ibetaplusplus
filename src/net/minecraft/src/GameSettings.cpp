@@ -793,8 +793,7 @@ void GameSettings::loadOptions()
 	fancyGraphics = false;
 	limitFramerate = 0;
 	ofChunkUpdates = 2;   // vanilla-equivalent
-	fprintf(stderr, "Beta++: settings forced: rd=%d fancy=%d limit=%d updates=%d\n",
-	        renderDistance, fancyGraphics, limitFramerate, ofChunkUpdates);
+	(void)0;
 #endif
 }
 

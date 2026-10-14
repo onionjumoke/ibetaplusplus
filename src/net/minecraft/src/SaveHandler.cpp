@@ -119,11 +119,11 @@ WorldInfo* SaveHandler::loadWorldInfo()
             // Do NOT fail silently: a null here makes the world load as "new"
             // with the seed passed by GuiSelectWorld (0), which is the classic
             // "terrain changed after reload" symptom.
-            fprintf(stderr, "Beta++: loadWorldInfo failed for %s: %s\n", path.c_str(), e.what());
+            (void)0;
         }
         catch (...)
         {
-            fprintf(stderr, "Beta++: loadWorldInfo failed for %s: unknown error\n", path.c_str());
+            (void)0;
         }
     }
     return nullptr;
