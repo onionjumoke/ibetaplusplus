@@ -495,7 +495,7 @@ static void seedFolderIfMissing(NSFileManager *fm, NSString *documents, NSString
 		NSLog(@"iB++: failed to seed bundled %@ into Documents", name);
 }
 
-static void requireAssetsOrExit()
+static bool prepareAssets()
 {
 	NSFileManager *fm = [NSFileManager defaultManager];
 	NSString *documents = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
@@ -503,16 +503,7 @@ static void requireAssetsOrExit()
 
 	seedFolderIfMissing(fm, documents, @"assets");
 	seedFolderIfMissing(fm, documents, @"resources");
-
-	if (assetsPresent())
-		return;
-
-	SDL_ShowSimpleMessageBox(0,
-	    "Missing files!",
-	    "You're missing the files! please drop your 'assets' and 'resources' folder "
-	    "to this app through iTunes",
-	    nullptr);
-	::exit(0);
+	return assetsPresent();
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -540,6 +531,7 @@ static void requireAssetsOrExit()
 {
 	BOOL _gameStarted;
 	BOOL _askingUsername;
+	BOOL _missingAssets;
 }
 @property(nonatomic, retain) UIWindow *window;
 @end
@@ -555,8 +547,6 @@ static void requireAssetsOrExit()
 
 	[[UIApplication sharedApplication] setStatusBarHidden:YES animated:NO];
 	[[UIApplication sharedApplication] setIdleTimerDisabled:YES]; // no screen sleep mid-mine
-
-	requireAssetsOrExit();
 
 	UIWindow *window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	self.window = window; // property retains
@@ -589,6 +579,25 @@ static void requireAssetsOrExit()
 		g_viewReady = true;
 	}
 	g_viewCv.notify_all();
+
+	// Assets gate. MUST be non-blocking: showing a modal alert inside
+	// didFinishLaunching (before the window is key) runs a nested runloop and
+	// never returns, so launchd's watchdog kills the app (0x8badf00d "failed to
+	// launch in time"). Present it asynchronously instead and quit on OK.
+	if (!prepareAssets())
+	{
+		_missingAssets = YES;
+		UIAlertView *missing = [[UIAlertView alloc]
+		    initWithTitle:@"Missing files!"
+		    message:@"You're missing the files! please drop your 'assets' and 'resources' "
+		            "folder to this app through iTunes"
+		    delegate:self
+		    cancelButtonTitle:@"OK"
+		    otherButtonTitles:nil];
+		missing.tag = 77;
+		[missing show];
+		[missing release];
+	}
 
 	// Headless/CI launches (SSH, apptool while locked) never reach
 	// applicationDidBecomeActive; a $HOME/bp.debug marker begins the game
@@ -628,7 +637,7 @@ static void spawnGameThreadWithBigStack()
 
 - (void)startGameThread
 {
-	if (_gameStarted)
+	if (_gameStarted || _missingAssets)
 		return;
 
 	// First launch: ask for the player name before the game reads it. The
@@ -667,6 +676,11 @@ static void spawnGameThreadWithBigStack()
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+	if (alertView.tag == 77)
+	{
+		// Missing assets: nothing to run. Quit cleanly on OK.
+		::exit(0);
+	}
 	// Modern iOS 5 selector — the legacy single-parameter variant below is
 	// never invoked by iOS 5, which stranded first-launch name entry.
 	[self alertViewClickedButtonAtIndex:buttonIndex field:[alertView textFieldAtIndex:0]];
