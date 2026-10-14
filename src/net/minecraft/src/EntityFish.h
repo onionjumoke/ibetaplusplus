@@ -1,0 +1,53 @@
+#pragma once
+
+#include "Entity.h"
+#include "java/Type.h"
+
+class World;
+class EntityPlayer;
+class EntityLiving;
+class NBTTagCompound;
+class ItemStack;
+
+// net.minecraft.src.EntityFish
+class EntityFish : public Entity
+{
+public:
+	EntityFish(World *world);
+	EntityFish(World *world, EntityPlayer *entityplayer);
+
+protected:
+	void entityInit() override;
+
+public:
+	void onUpdate() override;
+	void handleHealthUpdate(byte_t byte0) override;
+	int_t catchFish();
+	void setFishHeading(double d, double d1, double d2, float f, float f1);
+	void setPositionAndRotation2(double d, double d1, double d2, float f, float f1, int_t i) override;
+	void writeEntityToNBT(NBTTagCompound *nbttagcompound) override;
+	void readEntityFromNBT(NBTTagCompound *nbttagcompound) override;
+	bool canBeCollidedWith() override;
+	float getShadowSize() override;
+public:
+	int_t xTile;
+	int_t yTile;
+	int_t zTile;
+	int_t inTile;
+	bool  inGround;
+	EntityPlayer *angler;
+	Entity *bobber;
+private:
+	int ticksInGround;
+	int ticksInAir;
+	int ticksCatchable;
+	int fishPosRotationIncrements;
+	double fishX;
+	double fishY;
+	double fishZ;
+	double fishYaw;
+	double fishPitch;
+	double velocityX;
+	double velocityY;
+	double velocityZ;
+};

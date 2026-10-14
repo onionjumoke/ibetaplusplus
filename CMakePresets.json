@@ -1,0 +1,89 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "gcc-debug",
+      "displayName": "GCC Debug (MinGW-w64)",
+      "description": "Build BetaPlusPlus with gcc/g++ from PATH using Ninja.",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/gcc-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_MAKE_PROGRAM": {
+          "type": "FILEPATH",
+          "value": "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe"
+        }
+      }
+    },
+    {
+      "name": "gcc-release",
+      "displayName": "GCC Release (MinGW-w64)",
+      "description": "Optimized BetaPlusPlus build with gcc/g++ from PATH using Ninja.",
+      "inherits": "gcc-debug",
+      "binaryDir": "${sourceDir}/build/gcc-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "gcc32-debug",
+      "displayName": "GCC 32-bit Debug (MinGW-w64)",
+      "description": "32-bit BetaPlusPlus build using the multilib MinGW-w64 toolchain with -m32.",
+      "inherits": "gcc-debug",
+      "binaryDir": "${sourceDir}/build/gcc32-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "gcc.exe",
+        "CMAKE_CXX_COMPILER": "g++.exe",
+        "CMAKE_C_FLAGS": "-m32 -msse2 -mfpmath=sse",
+        "CMAKE_CXX_FLAGS": "-m32 -msse2 -mfpmath=sse",
+        "CMAKE_EXE_LINKER_FLAGS": "-m32",
+        "CMAKE_SHARED_LINKER_FLAGS": "-m32",
+        "CMAKE_MODULE_LINKER_FLAGS": "-m32"
+      }
+    },
+    {
+      "name": "gcc32-release",
+      "displayName": "GCC 32-bit Release (MinGW-w64)",
+      "description": "Optimized 32-bit BetaPlusPlus build with the MSYS2 MinGW i686 toolchain.",
+      "inherits": "gcc32-debug",
+      "binaryDir": "${sourceDir}/build/gcc32-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "gcc-debug",
+      "displayName": "Build GCC Debug",
+      "configurePreset": "gcc-debug",
+      "jobs": 0
+    },
+    {
+      "name": "gcc-release",
+      "displayName": "Build GCC Release",
+      "configurePreset": "gcc-release",
+      "jobs": 0
+    },
+    {
+      "name": "gcc32-debug",
+      "displayName": "Build GCC 32-bit Debug",
+      "configurePreset": "gcc32-debug",
+      "jobs": 0
+    },
+    {
+      "name": "gcc32-release",
+      "displayName": "Build GCC 32-bit Release",
+      "configurePreset": "gcc32-release",
+      "jobs": 0
+    }
+  ]
+}

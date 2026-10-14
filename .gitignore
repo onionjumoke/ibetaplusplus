@@ -1,0 +1,8 @@
+/build
+/out
+/bin
+/ref
+/external_old
+/.vs
+/.vscode
+/CMakeSettings.json

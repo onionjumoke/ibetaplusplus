@@ -1,0 +1,19 @@
+// Generated __config_site for the vendored libc++ headers (LLVM 19.1.7).
+// All ABI knobs left at defaults so the headers match the iOS 5 system
+// libc++.dylib, which already implements the stable v1 ABI.
+#ifndef _LIBCPP___CONFIG_SITE
+#define _LIBCPP___CONFIG_SITE
+
+#define _LIBCPP_ABI_VERSION 1
+#define _LIBCPP_ABI_NAMESPACE __1
+
+#define _LIBCPP_HARDENING_MODE_DEFAULT _LIBCPP_HARDENING_MODE_NONE
+
+// iOS 5 has no aligned_alloc; posix_memalign fallback is used instead.
+#define _LIBCPP_HAS_NO_LIBRARY_ALIGNED_ALLOCATION
+
+// Vendor availability annotations would mark filesystem/etc. as unavailable
+// below their upstream iOS debut; we backport the runtime instead.
+#define _LIBCPP_HAS_NO_VENDOR_AVAILABILITY_ANNOTATIONS
+
+#endif // _LIBCPP___CONFIG_SITE
