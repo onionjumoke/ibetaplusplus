@@ -1,3 +1,5 @@
+![Titlecard](images-for-readme/titlecard.png)
+
 # iBetaPlusPlus
 
 iBetaPlusPlus is a modified version of BetaPlusPlus (by [OptiJuegos](https://github.com/OptiJuegos/)), which is a heavily modified C++ implementation of classic Minecraft-era gameplay (Beta 1.7.3) designed around portability, low-end hardware, and platform-specific optimization.
@@ -5,6 +7,28 @@ iBetaPlusPlus is a modified version of BetaPlusPlus (by [OptiJuegos](https://git
 if you want to check out [OptiJuegos](https://github.com/OptiJuegos/)' BetaPlusPlus, it's now called [OptiCraftHeritageEdition](https://github.com/OptiJuegos/OptiCraftHeritageEdition)
 
 This repository is not intended to be a line-for-line source translation. The runtime, platform layers, rendering paths, input backends, storage systems, user interface, asset loading, and memory policies have been extensively reworked for the needs of this project.
+
+## Features
+![controls](images-for-readme/multiplayer.png)
+Mobile controls
+- Virtual joystick + on-screen buttons: MENU, INV, JUMP, CROUCH, CHAT, KB, DBG, CHNKS
+- Hotbar tap-to-select, hold-to-mine / tap-to-place
+- MCPE-style touch crafting screen — category tabs, Craftable filter, tap-to-craft
+- Native iOS keyboard for usernames, world names, seeds, and chat
+![qol](images-for-readme/flat.png)
+Extra content & QoL
+- World types: Superflat (always Forest, tiered ores — coal/iron common, gold rare, redstone rarer, diamonds only in veins of 4+ — plus a starter tree and a small pond) and a flat Nether (lava, glowstone, soul sand; zombie pigmen only)
+- F3 debug screen, F3+G chunk borders (plus a mobile button), with vertical borders
+- FOV slider; Mobs / Particles / Cave Sounds toggles; Unstuck button
+- Texture packs (pick up from the Documents folder)
+- iTunes File Sharing for assets and world saves
+- Custom app icon + "not affiliated with Mojang" disclaimer
+![visuals](images-for-readme/house.png)
+Performance / visuals
+- GLES 1.1 shim with op-stream repacking and a software-authoritative matrix path for PowerVR SGX
+- Batched font rendering (sign text went ~1000 ms → ~45 ms)
+- Time-budgeted chunk renderer + streaming
+- Big graphics options list: render distance, fog, clouds, trees, grass, animated water/lava/fire/portal/redstone, smooth lighting, better grass, stars/sky, anaglyph, framerate limit, AO, GUI scale, brightness, more
 
 ## Project goals
 
@@ -119,6 +143,11 @@ bash make-debug-ipa.sh
 iBetaPlusPlus contains substantial platform-specific changes compared with the behavior it reproduces. Examples include custom render backends, legacy UI work, low-memory chunk policies, touch input layers, asset loading, profiling, and platform-specific performance tuning.
 
 When changing shared systems, keep the platform abstraction boundary intact and avoid introducing PC-only assumptions into common code.
+
+## Known bugs
+- game sometimes crashes for no reason
+- sometimes there's an "end of stream" error when trying to connect in multiplayer (goes away when killing and reopening the app)
+- some blocks can visually corrupt, doesnt affect gameplay
 
 ## Third-party software
 
