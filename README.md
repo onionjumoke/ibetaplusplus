@@ -1,6 +1,6 @@
-# iB++
+# iBetaPlusPlus
 
-iB++ is a heavily modified, clean-room C++ implementation of classic Minecraft-era gameplay (Beta 1.7.3) designed around portability, low-end hardware, and platform-specific optimization.
+iBetaPlusPlus is a heavily modified, clean-room C++ implementation of classic Minecraft-era gameplay (Beta 1.7.3) designed around portability, low-end hardware, and platform-specific optimization.
 
 This repository is not intended to be a line-for-line source translation. The runtime, platform layers, rendering paths, input backends, storage systems, user interface, asset loading, and memory policies have been extensively reworked for the needs of this project.
 
@@ -14,11 +14,11 @@ This repository is not intended to be a line-for-line source translation. The ru
 
 ## Legal and disclaimers
 
-iB++ is an unofficial fan project: a C++ port of classic Minecraft-era (Beta 1.7.3) gameplay, provided for personal, educational, and preservation use.
+iBetaPlusPlus is an unofficial fan project: a C++ port of classic Minecraft-era (Beta 1.7.3) gameplay, provided for personal, educational, and preservation use.
 
 This project is **not affiliated with, endorsed by, sponsored by, approved by, or associated with** Mojang Studios or Microsoft. "Minecraft", "Mojang", and all related names, logos, and assets are trademarks and/or copyright of Mojang Studios / Microsoft and are used here only descriptively to identify the game whose behavior this project reproduces.
 
-iB++ ships **no Minecraft assets**. Textures, sounds, fonts, language files, and all other game data are copyright Mojang Studios, are **not** included in this repository, and are **not** included in any binary this project produces. The software does not and cannot run without a user-supplied copy of those assets: on iOS, copy an `assets` folder into the app's Documents directory over iTunes File Sharing; on desktop, place an `assets` directory next to the executable. You are solely responsible for obtaining those assets lawfully and for complying with Mojang's End User License Agreement and Usage Guidelines.
+iBetaPlusPlus ships **no Minecraft assets**. Textures, sounds, fonts, language files, and all other game data are copyright Mojang Studios, are **not** included in this repository, and are **not** included in any binary this project produces. The software does not and cannot run without a user-supplied copy of those assets: on iOS, copy an `assets` folder into the app's Documents directory over iTunes File Sharing; on desktop, place an `assets` directory next to the executable. You are solely responsible for obtaining those assets lawfully and for complying with Mojang's End User License Agreement and Usage Guidelines.
 
 This software is provided "as is", without warranty of any kind, express or implied, and the authors accept no liability for its use. See `LICENSE` for the full terms. Nothing in this document grants any rights to Mojang's intellectual property.
 
@@ -56,7 +56,7 @@ ios/            iOS packaging, Info.plist, and the IPA builder
 
 ## Setting up the assets and resources folders
 
-iB++ ships no game data. Before it will start, it needs two folders:
+iBetaPlusPlus ships no game data. Before it will start, it needs two folders:
 
 ```text
 assets/       textures, fonts, language files, GUI, particles, etc.
@@ -82,7 +82,7 @@ into a test IPA.
 ### Where the folders go
 
 - **iOS** — copy **both** folders into the app's **Documents** directory over
-  iTunes File Sharing (`device → Apps → iB++ → Documents`), then relaunch.
+  iTunes File Sharing (`device → Apps → iBetaPlusPlus → Documents`), then relaunch.
 - **Desktop** — place both folders next to the executable (the same directory
   as `BetaPlusPlus`).
 
@@ -112,7 +112,7 @@ bash make-debug-ipa.sh
 
 ## Development notes
 
-iB++ contains substantial platform-specific changes compared with the behavior it reproduces. Examples include custom render backends, legacy UI work, low-memory chunk policies, touch input layers, asset loading, profiling, and platform-specific performance tuning.
+iBetaPlusPlus contains substantial platform-specific changes compared with the behavior it reproduces. Examples include custom render backends, legacy UI work, low-memory chunk policies, touch input layers, asset loading, profiling, and platform-specific performance tuning.
 
 When changing shared systems, keep the platform abstraction boundary intact and avoid introducing PC-only assumptions into common code.
 
