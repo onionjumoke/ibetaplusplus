@@ -1,4 +1,4 @@
-![Titlecard](images-for-readme/titlecard.png)
+![Titlecard](images-for-readme/titlecard.PNG)
 
 # iBetaPlusPlus
 
@@ -9,13 +9,13 @@ if you want to check out [OptiJuegos](https://github.com/OptiJuegos/)' BetaPlusP
 This repository is not intended to be a line-for-line source translation. The runtime, platform layers, rendering paths, input backends, storage systems, user interface, asset loading, and memory policies have been extensively reworked for the needs of this project.
 
 ## Features
-![controls](images-for-readme/multiplayer.png)
+![controls](images-for-readme/multiplayer.PNG)
 Mobile controls
 - Virtual joystick + on-screen buttons: MENU, INV, JUMP, CROUCH, CHAT, KB, DBG, CHNKS
 - Hotbar tap-to-select, hold-to-mine / tap-to-place
 - MCPE-style touch crafting screen — category tabs, Craftable filter, tap-to-craft
 - Native iOS keyboard for usernames, world names, seeds, and chat
-![qol](images-for-readme/flat.png)
+![qol](images-for-readme/flat.PNG)
 Extra content & QoL
 - World types: Superflat (always Forest, tiered ores — coal/iron common, gold rare, redstone rarer, diamonds only in veins of 4+ — plus a starter tree and a small pond) and a flat Nether (lava, glowstone, soul sand; zombie pigmen only)
 - F3 debug screen, F3+G chunk borders (plus a mobile button), with vertical borders
@@ -23,7 +23,7 @@ Extra content & QoL
 - Texture packs (pick up from the Documents folder)
 - iTunes File Sharing for assets and world saves
 - Custom app icon + "not affiliated with Mojang" disclaimer
-![visuals](images-for-readme/house.png)
+![visuals](images-for-readme/house.PNG)
 Performance / visuals
 - GLES 1.1 shim with op-stream repacking and a software-authoritative matrix path for PowerVR SGX
 - Batched font rendering (sign text went ~1000 ms → ~45 ms)
