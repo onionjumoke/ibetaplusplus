@@ -4,6 +4,8 @@ iBetaPlusPlus is a heavily modified, clean-room C++ implementation of classic Mi
 
 This repository is not intended to be a line-for-line source translation. The runtime, platform layers, rendering paths, input backends, storage systems, user interface, asset loading, and memory policies have been extensively reworked for the needs of this project.
 
+And yes, this project was built with DeepSeek 4.1 Flash, which means that it's sorta vibe coded. if you dont like it, dont use it
+
 ## You can get the IPA in the Release tab btw, check the rest of the README to get the assts and resources folder
 
 
