@@ -1,6 +1,8 @@
 # iBetaPlusPlus
 
-iBetaPlusPlus is a modified version of BetaPlusPlus (by OptiJuegos), which is a heavily modified C++ implementation of classic Minecraft-era gameplay (Beta 1.7.3) designed around portability, low-end hardware, and platform-specific optimization.
+iBetaPlusPlus is a modified version of BetaPlusPlus (by [OptiJuegos](https://github.com/OptiJuegos/)), which is a heavily modified C++ implementation of classic Minecraft-era gameplay (Beta 1.7.3) designed around portability, low-end hardware, and platform-specific optimization.
+
+if you want to check out [OptiJuegos](https://github.com/OptiJuegos/)' BetaPlusPlus, it's now called [OptiCraftHeritageEdition](https://github.com/OptiJuegos/OptiCraftHeritageEdition)
 
 This repository is not intended to be a line-for-line source translation. The runtime, platform layers, rendering paths, input backends, storage systems, user interface, asset loading, and memory policies have been extensively reworked for the needs of this project.
 
